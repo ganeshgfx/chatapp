@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:windowSoftInputMode="adjustResize"
+    tools:context=".main.MainpageActivity">
+
+    <include layout="@layout/content_main2" />
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true">
+
+
+        <com.google.android.material.appbar.MaterialToolbar
+
+            android:id="@+id/toolbar"
+            style="@style/Theme.Chatapp.AppBarOverlay"
+            android:layout_width="match_parent"
+
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/ic_sharp_arrow_back_ios_24"
+            app:titleTextColor="@color/appBarText"
+
+            >
+
+            <ImageButton
+                android:id="@+id/imageButtonSettings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginEnd="@dimen/fab_margin"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:backgroundTint="#00000000"
+                app:srcCompat="@drawable/ic_settings"
+                app:tint="@color/icons" />
+        </com.google.android.material.appbar.MaterialToolbar>
+
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginBottom="16dp"
+
+        android:contentDescription="TODO"
+        android:text="Add Contact"
+        app:icon="@drawable/ic_untitled_design__2_" />
+
+    <LinearLayout
+        android:id="@+id/textLayoutBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_margin="0dp"
+        android:background="@color/textBack"
+        android:orientation="vertical"
+        android:padding="0dp"
+        android:visibility="invisible">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/chatBox"
+            style="@style/Widget.Material3.TextInputEditText.FilledBox.Dense"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/fab_margin"
+            android:hint="SMS"
+            android:padding="0dp"
+            app:endIconDrawable="@drawable/ic_round_send"
+            app:endIconMode="custom"
+            app:endIconCheckable="false"
+
+            app:boxCornerRadiusBottomEnd="27dp"
+            app:boxCornerRadiusTopEnd="27dp"
+            app:boxCornerRadiusBottomStart="27dp"
+            app:boxCornerRadiusTopStart="27dp"
+
+            app:endIconTint="@color/icons">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

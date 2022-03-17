@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".otp">
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/oto_inpt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="39dp"
+        android:layout_marginRight="39dp"
+        android:hint="Input OTP"
+        app:helperText="Input your name"
+        app:startIconDrawable="@drawable/ic_twotone_perm_phone_msg_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.185"
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/reSndOtp"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="39dp"
+        android:text="Resend OTP"
+        app:icon="@drawable/ic_twotone_perm_phone_msg_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/oto_inpt" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/okOtp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OK"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/oto_inpt"
+        app:layout_constraintVertical_bias="0.169"
+        android:layout_marginLeft="35dp"
+        android:layout_marginRight="35dp"
+        android:padding="14dp"
+        app:icon="@drawable/ic_twotone_check_circle_24"
+        app:iconGravity="textStart"/>
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/otpLoad"
+        style="@style/Widget.Material3.CircularProgressIndicator"
+        android:layout_width="198dp"
+        android:layout_height="223dp"
+        android:layout_margin="59dp"
+        app:trackCornerRadius="20dp"
+        app:indicatorSize="300dp"
+        app:trackThickness="40dp"
+        android:foregroundGravity="center"
+        android:indeterminate="true"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

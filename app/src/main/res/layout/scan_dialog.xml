@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.card.MaterialCardView
+
+        android:id="@+id/popScanCard"
+
+        android:layout_marginBottom="20dp"
+
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_gravity="center"
+
+        android:checkable="true"
+
+        android:clickable="true"
+        android:focusable="true"
+        app:cardElevation="10dp"
+
+        app:rippleColor="#FFFFFF"
+
+
+        >
+
+        <ImageView
+
+            android:id="@+id/popImageViewQR"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:srcCompat="@tools:sample/avatars" />
+
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:layout_margin="@dimen/fab_margin"
+        android:padding="@dimen/fab_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+
+        android:id="@+id/scanQR"
+        app:icon="@drawable/qr_code"
+        android:text="Scan QR"
+       />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+
+        android:layout_margin="@dimen/fab_margin"
+        android:padding="@dimen/fab_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:icon="@drawable/ic_twotone_qr_code_24"
+
+        android:visibility="gone"
+
+        android:id="@+id/showQR"
+        android:text="Show QR" />
+</LinearLayout>
