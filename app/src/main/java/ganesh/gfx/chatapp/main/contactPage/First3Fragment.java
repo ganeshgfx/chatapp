@@ -1,7 +1,7 @@
 package ganesh.gfx.chatapp.main.contactPage;
 
 import static ganesh.gfx.chatapp.main.MainpageActivity.hideFab;
-import static ganesh.gfx.chatapp.utils.Consts.cuttentActiveChatUser;
+import static ganesh.gfx.chatapp.utils.Consts.CURRENTLY_ACTIVE_CHAT;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import ganesh.gfx.chatapp.R;
+import ganesh.gfx.chatapp.data.Friend;
 import ganesh.gfx.chatapp.data.db.Contacts;
 import ganesh.gfx.chatapp.main.MainpageActivity;
 import ganesh.gfx.chatapp.utils.Tools;
@@ -43,6 +44,7 @@ public class First3Fragment extends Fragment {
 
     }
     boolean firstRun = true;
+    ListAdapter adapter;
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -53,42 +55,37 @@ public class First3Fragment extends Fragment {
         Contacts db = new Contacts(this.getContext());
 
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycledCons);
-        ListAdapter adapter = new ListAdapter(db.getAllContactsList());
+        adapter = new ListAdapter(db.getAllContactsList());
 
         recyclerView.addOnItemTouchListener(new RecyclerView.SimpleOnItemTouchListener());
-
-
-
-        adapter.setOnItemListenerListener(new ListAdapter.OnItemListener() {
-            @Override
-            public void OnItemClickListener(View view, int position) {
-
-//                Toast.makeText(MainActivity.this,
-//                        "project"+position+"Click!",
-//                        Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "OnItemClickListener: "+position);
-
-               openChat("position");
-                hideFab();
-            }
-
-            @Override
-            public void OnItemLongClickListener(View view, int position) {
-
-//                Toast.makeText(MainActivity.this,
-//                        "project"+position+"Be pressed long!",
-//                        Toast.LENGTH_SHORT).show();
-               // Log.d(TAG, "OnItemLongClickListener: "+position);
-
-                //openChat();
-                //hideFab();
-            }
-        });
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
-    }
 
+        recyclerView.addOnItemTouchListener(recyclerItemClickListener(recyclerView));
+    }
+    RecyclerItemClickListener recyclerItemClickListener(final RecyclerView recyclerView){
+        return new RecyclerItemClickListener (getContext(), recyclerView,
+                new RecyclerItemClickListener.OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(View view, int position) {
+
+                        Friend friend = adapter.getData(position);
+
+                        //Log.d(TAG, "OnItemClickListener: "+Tools.gson.toJson(friend));
+
+                        openChat(friend.getID());
+                        hideFab();
+
+                    }
+
+                    @Override
+                    public void onItemLongClick(View view, int position) {
+
+                    }
+                });
+    }
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -96,7 +93,7 @@ public class First3Fragment extends Fragment {
     }
 
     public void openChat(String chat){
-        cuttentActiveChatUser = chat;
+        CURRENTLY_ACTIVE_CHAT = chat;
         NavHostFragment.findNavController(First3Fragment.this)
                 .navigate(R.id.action_First3Fragment_to_Second3Fragment);
     }

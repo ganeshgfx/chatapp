@@ -16,12 +16,17 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
@@ -52,6 +57,7 @@ import ganesh.gfx.chatapp.databinding.ActivityMainpageBinding;
 import ganesh.gfx.chatapp.main.settings.Settings;
 import ganesh.gfx.chatapp.qr.ScanQR;
 import ganesh.gfx.chatapp.qr.ZqrActivity;
+import ganesh.gfx.chatapp.utils.Tools;
 
 
 public class MainpageActivity extends AppCompatActivity {
@@ -124,6 +130,7 @@ public class MainpageActivity extends AppCompatActivity {
             }
         });
         dbTest(this);
+        handleFire();
     }
 
     @Override
@@ -164,8 +171,6 @@ public class MainpageActivity extends AppCompatActivity {
 
         final Button showQR = (Button)dialogView.findViewById(R.id.showQR);
         final Button scanQR = (Button)dialogView.findViewById(R.id.scanQR);
-
-
 
         scanQR.setOnClickListener(view -> {
             Intent myIntent = new Intent(MainpageActivity.this, ZqrActivity.class);
@@ -219,6 +224,13 @@ public class MainpageActivity extends AppCompatActivity {
         });
 
         setRanCols();
+
+
+    }
+
+    private void handleFire() {
+       // Log.d(TAG, "handleFire: HERE");
+
     }
 
     private boolean checkCamPermision()

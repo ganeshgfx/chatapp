@@ -38,8 +38,8 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Chat cht = chats.get(position);
-        holder.chatBBl.setText(cht.dbTime+" : "+cht.message);
-        if (chats.get(position).sendByMe) {
+        holder.chatBBl.setText(cht.message);
+        if (chats.get(position).isSendByMe()) {
 
             holder.chatBBl.setGravity(Gravity.END);
             holder.chatBBl.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);

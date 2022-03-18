@@ -15,10 +15,10 @@ import ganesh.gfx.chatapp.main.chatPage.Chat;
 
 public class Sms extends SQLiteOpenHelper {
     ////
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 8;
     private static final String DATABASE_NAME = "smsManager";
 
-    private static final String SMS = "sms";
+    private static String SMS;
 
     private static final String KEY_ID = "id";//AI
 
@@ -28,8 +28,9 @@ public class Sms extends SQLiteOpenHelper {
 
     private static final String TAG = "appgfx";
 
-    public Sms(Context context) {
+    public Sms(Context context,String friendID) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        SMS = "sms_"+friendID;
         //3rd argument to be passed is CursorFactory instance
     }
 
