@@ -8,12 +8,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import ganesh.gfx.chatapp.R;
 import ganesh.gfx.chatapp.data.Friend;
@@ -26,6 +31,8 @@ public class First3Fragment extends Fragment {
 
     private static final String TAG = "appgfx";
     private ganesh.gfx.chatapp.databinding.FragmentFirst3Binding binding;
+
+    Contacts db;
 
     @Override
     public void onResume() {
@@ -52,7 +59,7 @@ public class First3Fragment extends Fragment {
             MainpageActivity.showFab();
         firstRun = false;
 
-        Contacts db = new Contacts(this.getContext());
+        db = new Contacts(this.getContext());
 
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycledCons);
         adapter = new ListAdapter(db.getAllContactsList());
@@ -82,7 +89,23 @@ public class First3Fragment extends Fragment {
 
                     @Override
                     public void onItemLongClick(View view, int position) {
+                        Friend friend = adapter.getData(position);
+                        db.deleteContact(friend);
 
+                        FirebaseFirestore.getInstance()
+                        .collection("contacts")
+                                .document(FirebaseAuth.getInstance().getUid())
+                                .collection("list")
+                                .document(friend.getID()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                Log.d(TAG, "Contact removed from fire ");
+
+                            }
+                        });
+                        Toast.makeText(getContext(), friend.getName()+" phir milte he \uD83E\uDD27",
+                                Toast.LENGTH_LONG).show();
+                        adapter.removeFriend(position);
                     }
                 });
     }
@@ -96,6 +119,12 @@ public class First3Fragment extends Fragment {
         CURRENTLY_ACTIVE_CHAT = chat;
         NavHostFragment.findNavController(First3Fragment.this)
                 .navigate(R.id.action_First3Fragment_to_Second3Fragment);
+    }
+    public void addNewFriend(Friend friend){
+        adapter.addNewFriend(friend);
+    }
+    public void tes(){
+        Log.d(TAG, "tes: ksidj");
     }
 
 }

@@ -110,61 +110,62 @@ public class ScanQR extends AppCompatActivity {
 
         setRanCols();
 
-        registration = query.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.d(TAG, "listen:error - QRShow", e);
-                    return;
-                }
-                for (DocumentChange dc : value.getDocumentChanges()) {
-                    switch (dc.getType()) {
-                        case ADDED:
-                            String friendUserId = dc.getDocument().getString("userId");
-                            String friendUserName = dc.getDocument().getString("name");
+        detectFriendScan();
+    }
 
-                            if (contacts.getContact(friendUserId).getID().equals("")) {
+    private void detectFriendScan() {
+        registration = query.addSnapshotListener((value, e) -> {
+            if (e != null) {
+                Log.d(TAG, "listen:error - QRShow", e);
+                return;
+            }
+            for (DocumentChange dc : value.getDocumentChanges()) {
+                switch (dc.getType()) {
+                    case ADDED:
+                        String friendUserId = dc.getDocument().getString("userId");
+                        String friendUserName = dc.getDocument().getString("name");
 
-                                //Log.d(TAG, "onEvent: "+contacts.getContact(friendUserId).toString());
+                        if (contacts.getContact(friendUserId).getID().equals("")) {
 
-                                Log.d(TAG, "New: " + friendUserId);
+                            //Log.d(TAG, "onEvent: "+contacts.getContact(friendUserId).toString());
 
-                                Map<String, Object> user = new HashMap<>();
-                                user.put("userId", FirebaseAuth.getInstance().getUid());
-                                user.put("name", FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+                            Log.d(TAG, "New: " + friendUserId);
 
-                                db
-                                        .collection("contacts")
-                                        .document(friendUserId)
-                                        .collection("list")
-                                        .document(myUserId).set(user)
-                                        .addOnSuccessListener(aVoid -> {
-                                            Toast.makeText(ScanQR.this, "Contact Added",
-                                                    Toast.LENGTH_SHORT).show();
-                                            new Contacts(getBaseContext()).addContact(new Friend(friendUserId, friendUserName));
-                                            Log.d(TAG, "Contacted");
+                            Map<String, Object> user = new HashMap<>();
+                            user.put("userId", FirebaseAuth.getInstance().getUid());
+                            user.put("name", FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
 
-                                            backHome();
-                                        })
-                                        .addOnFailureListener(er -> Log.d(TAG, "Error contacting", er));
+                            db
+                                    .collection("contacts")
+                                    .document(friendUserId)
+                                    .collection("list")
+                                    .document(myUserId).set(user)
+                                    .addOnSuccessListener(aVoid -> {
+                                        Toast.makeText(ScanQR.this, "Contact Added",
+                                                Toast.LENGTH_SHORT).show();
+                                        new Contacts(getBaseContext()).addContact(new Friend(friendUserId, friendUserName));
+                                        Log.d(TAG, "Contacted");
 
-                            }else {
-                                //Toast.makeText(ScanQR.this, "Already added",Toast.LENGTH_SHORT).show();
-                            }
-                            break;
-                        case MODIFIED:
-                            Friend frd = new Friend(dc.getDocument().getString("userId"),
-                                    dc.getDocument().getString("name"));
-                            if (!contacts.getContact(frd.getID()).getID().equals("")) {
-                                Toast.makeText(ScanQR.this, "Already added", Toast.LENGTH_SHORT).show();
-                                backHome();
-                            }
-                            //Log.d(TAG, "Modified: " + Tools.gson.toJson(frd));
-                            break;
-                        case REMOVED:
-                            //Log.d(TAG, "Removed: " + dc.getDocument().getData());
-                            break;
-                    }
+                                        backHome();
+                                    })
+                                    .addOnFailureListener(er -> Log.d(TAG, "Error contacting", er));
+
+                        }else {
+                            //Toast.makeText(ScanQR.this, "Already added",Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    case MODIFIED:
+                        Friend frd = new Friend(dc.getDocument().getString("userId"),
+                                dc.getDocument().getString("name"));
+                        if (!contacts.getContact(frd.getID()).getID().equals("")) {
+                            Toast.makeText(ScanQR.this, "Already added", Toast.LENGTH_SHORT).show();
+                            backHome();
+                        }
+                        //Log.d(TAG, "Modified: " + Tools.gson.toJson(frd));
+                        break;
+                    case REMOVED:
+                        //Log.d(TAG, "Removed: " + dc.getDocument().getData());
+                        break;
                 }
             }
         });

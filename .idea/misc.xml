@@ -45,6 +45,8 @@
         <entry key="app/src/main/res/layout/activity_scan_qr.xml" value="0.31023550724637683" />
         <entry key="app/src/main/res/layout/chat_view.xml" value="0.4" />
         <entry key="app/src/main/res/layout/contact_view.xml" value="0.3591485507246377" />
+        <entry key="app/src/main/res/layout/content_main2.xml" value="0.3307291666666667" />
+        <entry key="app/src/main/res/layout/fragment_first3.xml" value="0.3307291666666667" />
         <entry key="app/src/main/res/layout/fragment_scan.xml" value="0.31023550724637683" />
         <entry key="app/src/main/res/layout/scan_dialog.xml" value="0.4" />
         <entry key="app/src/main/res/layout/zqr.xml" value="0.3307291666666667" />

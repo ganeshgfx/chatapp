@@ -1,9 +1,7 @@
 package ganesh.gfx.chatapp.main;
 
 import android.Manifest;
-import android.content.ClipData;
-import android.content.Context;
-import android.content.DialogInterface;
+import android.app.Fragment;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
@@ -16,37 +14,43 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import ganesh.gfx.chatapp.R;
@@ -54,6 +58,7 @@ import ganesh.gfx.chatapp.data.Friend;
 import ganesh.gfx.chatapp.data.db.Contacts;
 
 import ganesh.gfx.chatapp.databinding.ActivityMainpageBinding;
+import ganesh.gfx.chatapp.main.contactPage.First3Fragment;
 import ganesh.gfx.chatapp.main.settings.Settings;
 import ganesh.gfx.chatapp.qr.ScanQR;
 import ganesh.gfx.chatapp.qr.ZqrActivity;
@@ -66,6 +71,7 @@ public class MainpageActivity extends AppCompatActivity {
     private AppBarConfiguration appBarConfiguration;
     private static ActivityMainpageBinding binding;
     private static boolean isContactPage = true;
+
 
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
@@ -100,42 +106,39 @@ public class MainpageActivity extends AppCompatActivity {
         settings.setOnClickListener(view -> MainpageActivity.this.startActivity(new Intent(MainpageActivity.this,
                 Settings.class)));
 
-//        toolbar.setOnMenuItemClickListener(item -> {
-//            switch (item.getItemId()){
-//                case R.id.action_settings_top:
-//
-//                    return true;
-//            }
-//            return false;
-//        });
 
-        binding.fab.setOnClickListener(new View.OnClickListener() {
+        binding.fab.setOnClickListener(view -> {
 
-            @Override
-            public void onClick(View view) {
-
-               // Log.d(TAG, "onClick: Cam "+checkCamPermision());
-                if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED){
-                    Snackbar.make(view, "📷 Please allow camera permission", Snackbar.LENGTH_LONG).setAction("Allow", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            ActivityCompat.requestPermissions(MainpageActivity.this, new String[] {Manifest.permission.CAMERA}, 100);
-                        }
-                    }).show();
-                }
-                else
-                    showDiolog();
-
-
+           // Log.d(TAG, "onClick: Cam "+checkCamPermision());
+            if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED){
+                Snackbar.make(view, "📷 Please allow camera permission", Snackbar.LENGTH_LONG).setAction("Allow", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ActivityCompat.requestPermissions(MainpageActivity.this, new String[] {Manifest.permission.CAMERA}, 100);
+                    }
+                }).show();
             }
+            else
+                showDiolog();
+
+
         });
-        dbTest(this);
-        handleFire();
+
+        contacts = new Contacts(this);
+        myUserId = FirebaseAuth.getInstance().getUid();
+        fDb = FirebaseFirestore.getInstance();
+        query = fDb.collection("contacts").document(myUserId).collection("list");
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        registration.remove();
     }
 
     @Override
@@ -158,13 +161,23 @@ public class MainpageActivity extends AppCompatActivity {
         isContactPage = true;
         settings.setVisibility(View.VISIBLE);
     }
+
     Random rand;
     MaterialCardView qrCard;
+
+    ListenerRegistration registration;
+    Query query;
+    FirebaseFirestore fDb;
+    String myUserId;
+
+    Contacts contacts;
+    MaterialAlertDialogBuilder dialogBuilder;
+    AlertDialog dialog;
     void showDiolog(){
 
         rand = new Random();
 
-        MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(this);
+        dialogBuilder = new MaterialAlertDialogBuilder(this);
         LayoutInflater inflater = this.getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.scan_dialog, null);
         dialogBuilder.setView(dialogView);
@@ -182,16 +195,15 @@ public class MainpageActivity extends AppCompatActivity {
             MainpageActivity.this.startActivity(myIntent);
         });
 
-        dialogBuilder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
+        dialogBuilder.setNegativeButton("CANCEL", (dialogInterface, i) -> {
 
-                            }
-                        });
+        });
 
         dialogBuilder.setTitle(" ");
 
-        dialogBuilder.show();
+       // dialogBuilder.show();
+        dialog = dialogBuilder.create();
+        dialog.show();
 
         setQR(dialogView);
     }
@@ -224,14 +236,10 @@ public class MainpageActivity extends AppCompatActivity {
         });
 
         setRanCols();
-
-
-    }
-
-    private void handleFire() {
-       // Log.d(TAG, "handleFire: HERE");
+        detectFriendScan();
 
     }
+
 
     private boolean checkCamPermision()
     {
@@ -257,7 +265,6 @@ public class MainpageActivity extends AppCompatActivity {
 
         qrCard.setRippleColor(new ColorStateList(states, colors));
     }
-
     int[] getRandColorValue() {
         int vals[] = new int[9];
         switch (rand.nextInt(6)) {
@@ -283,24 +290,76 @@ public class MainpageActivity extends AppCompatActivity {
         }
         return vals;
     }
-    void dbTest(Context context){
+    private void detectFriendScan() {
 
-        //Log.d(TAG, "dbTest: HERE");
+        registration = query.addSnapshotListener((value, e) -> {
+            if (e != null) {
+                Log.d(TAG, "listen:error - QRShow", e);
+                return;
+            }
+            for (DocumentChange dc : value.getDocumentChanges()) {
+                switch (dc.getType()) {
+                    case ADDED:
+                        String friendUserId = dc.getDocument().getString("userId");
+                        String friendUserName = dc.getDocument().getString("name");
 
-//        Contacts db = new Contacts(context);
+                        if (contacts.getContact(friendUserId).getID().equals("")) {
 
-        // Inserting Contacts
-//        db.addContact(new Friend( "9A100000000","Ravi"));
-//        db.addContact(new Friend( "91999999dsdsfd99","Srinivas"));
-//        db.addContact(new Friend("95222SS22222","Tommy"));
-//        db.addContact(new Friend("953333c3333","Karthik"));
+                            //Log.d(TAG, "onEvent: "+contacts.getContact(friendUserId).toString());
 
-        //List<Friend> contacts = db.getAllContacts();
+                            Log.d(TAG, "New: " + friendUserId);
 
-//        for (Friend cn : contacts) {
-//            String log = "Id: " + cn.getID() + " ,Name: " + cn.getName() ;
-//            // Writing Contacts to log
-//            Log.d(TAG, log);
-//        }
+                            Map<String, Object> user = new HashMap<>();
+                            user.put("userId", FirebaseAuth.getInstance().getUid());
+                            user.put("name", FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+
+                            fDb
+                                    .collection("contacts")
+                                    .document(friendUserId)
+                                    .collection("list")
+                                    .document(myUserId).set(user)
+                                    .addOnSuccessListener(aVoid -> {
+
+                                        Friend friend = new Friend(friendUserId, friendUserName);
+
+                                        Toast.makeText(this, "Contact Added",
+                                                Toast.LENGTH_SHORT).show();
+                                        new Contacts(getBaseContext()).addContact(friend);
+                                        Log.d(TAG, "Contacted");
+                                        dialog.dismiss();
+
+                                        refreshFreg();
+                                        // backHome();
+                                    })
+                                    .addOnFailureListener(er -> Log.d(TAG, "Error contacting", er));
+
+                        }else {
+                            //Toast.makeText(ScanQR.this, "Already added",Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    case MODIFIED:
+                        Friend frd = new Friend(dc.getDocument().getString("userId"),
+                                dc.getDocument().getString("name"));
+                        if (!contacts.getContact(frd.getID()).getID().equals("")) {
+                            Toast.makeText(this, "Already added", Toast.LENGTH_SHORT).show();
+                            //backHome();
+                        }
+                        //Log.d(TAG, "Modified: " + Tools.gson.toJson(frd));
+                        break;
+                    case REMOVED:
+                        //Log.d(TAG, "Removed: " + dc.getDocument().getData());
+                        break;
+                }
+            }
+        });
     }
+
+    private void refreshFreg() {
+        NavController navController = Navigation.findNavController(this,
+                R.id.nav_host_fragment_content_main2);
+        int id = navController.getCurrentDestination().getId();
+        navController.popBackStack(id,true);
+        navController.navigate(id);
+    }
+
 }

@@ -16,6 +16,7 @@ import java.util.List;
 
 import ganesh.gfx.chatapp.R;
 import ganesh.gfx.chatapp.data.Friend;
+import ganesh.gfx.chatapp.main.chatPage.Chat;
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder>{
     private final List<Friend> listdata;
@@ -113,5 +114,13 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder>{
     }
     Friend getData(int pos){
         return listdata.get(pos);
+    }
+    public void addNewFriend(Friend friend){
+        listdata.add(friend);
+        notifyDataSetChanged();
+    }
+    public void removeFriend(int pos){
+        listdata.remove(pos);
+        notifyDataSetChanged();
     }
 }
