@@ -73,7 +73,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/fab_margin"
-            android:hint="SMS"
+            android:hint="💬"
             android:padding="0dp"
             app:endIconDrawable="@drawable/ic_round_send"
             app:endIconMode="custom"

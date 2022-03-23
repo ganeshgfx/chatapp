@@ -138,7 +138,11 @@ public class MainpageActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        registration.remove();
+       try {
+           registration.remove();
+       }catch (Exception e){
+           Log.d(TAG, "onDestroy  registration.remove();: "+e.getMessage());
+       }
     }
 
     @Override

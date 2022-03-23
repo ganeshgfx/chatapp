@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/deleteConatct"
+        android:icon="@drawable/ic_person_remove"
+        android:title="delete"
+        android:contentDescription="content_description_delete"
+        android:iconTint="@color/icons"
+        app:showAsAction="always"
+        />
+
+</menu>

@@ -32,6 +32,18 @@ public class Sms extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         SMS = "sms_"+friendID;
         //3rd argument to be passed is CursorFactory instance
+
+        String selectQuery = "SELECT  * FROM " + SMS;
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        try{
+            Cursor cursor = db.rawQuery(selectQuery, null);
+        }catch (Exception e){
+            //Log.d(TAG, e.getMessage());
+            String CREATE_SMS_TABLE = "CREATE TABLE "+SMS+"("+KEY_ID+" INTEGER PRIMARY KEY " +
+                    "AUTOINCREMENT," + CHAT + " TEXT," + SBY+ " TEXT,"+TIME+" TEXT)";
+            db.execSQL(CREATE_SMS_TABLE);
+        }
     }
 
     // Creating Tables

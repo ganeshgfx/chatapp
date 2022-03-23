@@ -5,7 +5,10 @@ import static ganesh.gfx.chatapp.utils.Consts.CURRENTLY_ACTIVE_CHAT;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -23,6 +26,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import ganesh.gfx.chatapp.R;
 import ganesh.gfx.chatapp.data.Friend;
 import ganesh.gfx.chatapp.data.db.Contacts;
+import ganesh.gfx.chatapp.databinding.FragmentFirst3Binding;
 import ganesh.gfx.chatapp.main.MainpageActivity;
 import ganesh.gfx.chatapp.utils.Tools;
 
@@ -30,9 +34,20 @@ import ganesh.gfx.chatapp.utils.Tools;
 public class First3Fragment extends Fragment {
 
     private static final String TAG = "appgfx";
-    private ganesh.gfx.chatapp.databinding.FragmentFirst3Binding binding;
+    private FragmentFirst3Binding binding;
 
     Contacts db;
+
+    ActionMode actionMode;
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(actionMode!=null){
+            actionMode.finish();
+            actionMode  = null;
+        }
+    }
 
     @Override
     public void onResume() {
@@ -89,23 +104,13 @@ public class First3Fragment extends Fragment {
 
                     @Override
                     public void onItemLongClick(View view, int position) {
-                        Friend friend = adapter.getData(position);
-                        db.deleteContact(friend);
+                        friendPosition = position;
+                        if(actionMode == null){
+                            actionMode = getActivity().startActionMode(mActionModeCallBack);
 
-                        FirebaseFirestore.getInstance()
-                        .collection("contacts")
-                                .document(FirebaseAuth.getInstance().getUid())
-                                .collection("list")
-                                .document(friend.getID()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                Log.d(TAG, "Contact removed from fire ");
+                        }
 
-                            }
-                        });
-                        Toast.makeText(getContext(), friend.getName()+" phir milte he \uD83E\uDD27",
-                                Toast.LENGTH_LONG).show();
-                        adapter.removeFriend(position);
+
                     }
                 });
     }
@@ -126,5 +131,58 @@ public class First3Fragment extends Fragment {
     public void tes(){
         Log.d(TAG, "tes: ksidj");
     }
+    int friendPosition;
+    private ActionMode.Callback mActionModeCallBack = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+           mode.getMenuInflater().inflate(R.menu.edit_contact_menu,menu);
+//           mode.setTitle("gg");
+            return true;
+        }
 
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()){
+                case R.id.deleteConatct:
+
+                    deleteFriendFromList();
+
+                    mode.finish();
+                    return true;
+                default: return false;
+
+            }
+
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+                actionMode = null;
+        }
+    };
+
+    private void deleteFriendFromList() {
+        Friend friend = adapter.getData(friendPosition);
+        db.deleteContact(friend);
+
+        FirebaseFirestore.getInstance()
+                .collection("contacts")
+                .document(FirebaseAuth.getInstance().getUid())
+                .collection("list")
+                .document(friend.getID()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                Log.d(TAG, "Contact removed from fire ");
+
+            }
+        });
+        Toast.makeText(getContext(), friend.getName()+" phir milte he \uD83E\uDD27",
+                Toast.LENGTH_LONG).show();
+        adapter.removeFriend(friendPosition);
+    }
 }

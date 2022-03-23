@@ -63,6 +63,10 @@
         <item name="colorPrimaryInverse">@color/md_theme_dark_primaryInverse</item>
 
 
+        <item name="windowActionModeOverlay">true</item>
+        <item name="android:actionModeCloseDrawable">@drawable/ic_clear</item>
+        <item name="actionBarTheme">@style/ThemeOverlay.Material3.Dark.ActionBar</item>
+
     </style>
 
 </resources>
