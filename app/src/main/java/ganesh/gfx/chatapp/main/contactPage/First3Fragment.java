@@ -149,11 +149,13 @@ public class First3Fragment extends Fragment {
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()){
                 case R.id.deleteConatct:
+                case R.id.deleteConatctText:
 
                     deleteFriendFromList();
 
                     mode.finish();
                     return true;
+
                 default: return false;
 
             }
