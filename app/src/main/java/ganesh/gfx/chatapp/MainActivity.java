@@ -31,21 +31,18 @@ public class MainActivity extends AppCompatActivity {
         animation.setDuration(700);
         imageView.startAnimation(animation);
         imageView.setVisibility(View.INVISIBLE);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                SharedPreferences settings = getSharedPreferences("vadati",0);
-                String myNo = settings.getString("myNo", "NULL");
+        new Handler().postDelayed(() -> {
+            SharedPreferences settings = getSharedPreferences("vadati",0);
+            String myNo = settings.getString("myNo", "NULL");
 
-                if(FirebaseAuth.getInstance().getCurrentUser() != null) {
-                    Intent myIntent = new Intent(MainActivity.this, MainpageActivity.class);
-                    MainActivity.this.startActivity(myIntent);
-                    finish();
-                }else{
-                    Intent myIntent = new Intent(MainActivity.this, login.class);
-                    MainActivity.this.startActivity(myIntent);
-                    finish();
-                }
+            if(FirebaseAuth.getInstance().getCurrentUser() != null) {
+                Intent myIntent = new Intent(MainActivity.this, MainpageActivity.class);
+                MainActivity.this.startActivity(myIntent);
+                finish();
+            }else{
+                Intent myIntent = new Intent(MainActivity.this, login.class);
+                MainActivity.this.startActivity(myIntent);
+                finish();
             }
         }, 800);
 

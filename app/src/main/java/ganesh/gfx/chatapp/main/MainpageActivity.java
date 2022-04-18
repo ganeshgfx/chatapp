@@ -57,6 +57,7 @@ import ganesh.gfx.chatapp.R;
 import ganesh.gfx.chatapp.data.Friend;
 import ganesh.gfx.chatapp.data.db.Contacts;
 
+
 import ganesh.gfx.chatapp.databinding.ActivityMainpageBinding;
 import ganesh.gfx.chatapp.main.contactPage.First3Fragment;
 import ganesh.gfx.chatapp.main.settings.Settings;
@@ -237,6 +238,17 @@ public class MainpageActivity extends AppCompatActivity {
 
             setRanCols();
 
+        });
+
+        qrCard.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                Toast.makeText(MainpageActivity.this, "Be like rainbow,\nHave spectrum of " +
+                        "knowledge. \uD83C\uDF08\uD83D\uDCDA", Toast.LENGTH_SHORT).show();
+
+                return false;
+            }
         });
 
         setRanCols();

@@ -9,6 +9,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+
     <com.google.android.material.card.MaterialCardView
 
         android:id="@+id/popScanCard"
@@ -27,7 +28,6 @@
 
         app:rippleColor="#FFFFFF"
 
-
         >
 
         <ImageView
@@ -37,23 +37,27 @@
             android:layout_height="match_parent"
             tools:srcCompat="@tools:sample/avatars" />
 
-
     </com.google.android.material.card.MaterialCardView>
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/fab_margin"
+        android:textAlignment="center"
+        android:text="Show/Scan QR Code to add friends." />
 
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:layout_gravity="center"
         android:layout_width="250dp"
         android:layout_marginBottom="@dimen/fab_margin"
-
         android:layout_height="wrap_content"
-
-
         android:id="@+id/scanQR"
         app:icon="@drawable/qr_code"
         android:text="Scan QR"
        />
+
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 
@@ -68,4 +72,6 @@
 
         android:id="@+id/showQR"
         android:text="Show QR" />
+
+
 </LinearLayout>
